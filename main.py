@@ -1,51 +1,33 @@
-import socket
+import os
+import time
 
-class SocketClient:
+from socket_client import SocketClient
 
-    def __init__(self, server_IP: str, server_port: int, client_name: str):
-        self.server_IP = server_IP
-        self.server_port = server_port
-        self.client_name = client_name
-        self.is_connected = False
+
+client = SocketClient("127.0.0.1", 7777, "Tota")
+
+client.client_name = input("Enter client name\n")
+
+while(True):
+
+    os.system('cls')
+    print(client.client_name + " : " + str(client.is_connected))
+    print("Enter \"connect\" to connect to the server")
+    print("Enter \"disconnect\" to disconnect from the server")
+    print("Enter \"message messageText\" to disconnect from the server")
+    print("Enter \"exit\" to exit")
+
+    input_str = input()
     
+    time.sleep(0.1)
 
+    if(input_str == "connect"):
+        client.connect()
+    elif(input_str == "disconnect"):
+        client.disconnect()
+    elif(input_str.find("message") > -1):
+        client.send_message(input_str.replace("message ", ""))
+    elif(input_str == "exit"):
+        break
 
-
-HOST = "127.0.0.1"  # The server's hostname or IP address
-PORT = 7777  # The port used by the server
-
-client = socket.socket()
-
-print("Starting")
-
-client.connect((HOST, PORT))
-
-print("Connecting to server")
-
-message = "Aboba<|CR|><|EOM|>"
-messageBytes = message.encode()
-
-client.send(messageBytes)
-
-print("Waiting for server response")
-
-data = client.recv(1024)
-
-print("Server sent: ", data.decode())
-
-message = "Aboba<|M|>Hey server<|EOM|>"
-messageBytes = message.encode()
-
-client.send(messageBytes)
-
-data = client.recv(1024)
-
-print("Server sent: ", data.decode())
-
-abo = input()
-
-print(abo)
-
-client.shutdown(2)
-client.close()
-
+input("Press any key to Exit")
