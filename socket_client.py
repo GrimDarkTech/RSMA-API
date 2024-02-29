@@ -26,6 +26,7 @@ class SocketClient:
         self.server_port = server_port
         self.client_name = client_name
         self.is_connected = False
+        self._message_reciver = None
     
     def _listen_to_message_async(self):
         """Listening to messages"""
@@ -61,7 +62,7 @@ class SocketClient:
 
                 elif(response == "<|DR|><|ACK|>"):
                     try:
-                        self._message_reciver.join()
+                        self._message_reciver.cancel()
                         self._client.shutdown(2)
                     except:
                         print("Error")
@@ -109,8 +110,9 @@ class SocketClient:
             print(f"{self.client_name}: successfully connect to server.")
             self.is_connected = True
 
-        self._message_reciver = threading.Thread(target = self._listen_to_message_async)
-        self._message_reciver.start()
+        if(self._message_reciver == None):
+            self._message_reciver = threading.Thread(target=self._listen_to_message_async)
+            self._message_reciver.start()
 
     def send_message(self, message: str):
         """Sends message to server"""
