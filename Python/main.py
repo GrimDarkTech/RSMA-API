@@ -4,7 +4,7 @@ from rsmapy import RSMA
 
 def main():
     #connecting to RSMA
-    RSMA.connect("RSMApy")
+    RSMA.connect("127.0.0.1","RSMApy")
 
     #waiting 1 second
     time.sleep(1)
@@ -15,7 +15,7 @@ def main():
     time.sleep(1)
 
     #sending command to RSMA
-    RSMA.execute("help")
+    RSMA.load_scene()
 
     time.sleep(1)
 

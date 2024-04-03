@@ -6,9 +6,9 @@ class RSMA:
 
     client: SocketClient
     
-    def connect(client_name: str):
+    def connect(ip: str,client_name: str):
         if(not(RSMA.is_connected)):
-            RSMA.client = SocketClient("127.0.0.1", 7777, client_name)
+            RSMA.client = SocketClient(ip, 7777, client_name)
             RSMA.client.connect()
             RSMA.is_connected = True
 
@@ -22,7 +22,7 @@ class RSMA:
             RSMA.client.send_message("<|CMD|>" + command)
 
     def load_scene(scene_name: str):
-        RSMA.execute(f"scene load {scene_name}")
+        RSMA.execute(f"scene_load {scene_name}")
 
     def add_marker(color: str, x, y, z):
         RSMA.execute(f"marker {color} {x} {y} {z}")
