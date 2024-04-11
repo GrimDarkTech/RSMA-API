@@ -1,14 +1,15 @@
-from socket_client import SocketClient
+#from socket_client import RSMAClient
+from rsma_client import RSMAClient
 
 class RSMA:
 
     is_connected : bool = False 
 
-    client: SocketClient
+    client: RSMAClient
     
     def connect(ip: str,client_name: str):
         if(not(RSMA.is_connected)):
-            RSMA.client = SocketClient(ip, 7777, client_name)
+            RSMA.client = RSMAClient(ip, 7777, client_name)
             RSMA.client.connect()
             RSMA.is_connected = True
 
@@ -36,6 +37,9 @@ class RSMA:
     def gpio_write(id, port, pin, value):
         RSMA.execute(f"gpio_write {id} {port} {pin} {value}")
 
+    def gpio_read(id, port, pin):
+        RSMA.execute(f"gpio_read {id} {port} {pin}")
+
     def add_drone(x, y, z):
         RSMA.execute(f"drone {x} {y} {z}")
 
@@ -53,6 +57,9 @@ class RSMA:
     
     def writer_stop(id):
         RSMA.execute(f"writer_stop {id}")
+
+    def controller_position(id):
+        RSMA.execute(f"controller_position {id}")
 
     def message(text: str):
         if(RSMA.is_connected):

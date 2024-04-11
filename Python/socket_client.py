@@ -21,12 +21,16 @@ class SocketClient:
     _message_reciver: threading.Thread
     """Uses to contain task for listening for messages"""
 
+    logger: bool
+    """If true, logging client messages"""
+
     def __init__(self, server_IP: str, server_port: int, client_name: str):
         self.server_IP = server_IP
         self.server_port = server_port
         self.client_name = client_name
         self.is_connected = False
         self._message_reciver = None
+        self.logger = False
     
     def _listen_to_message_async(self):
         """Listening to messages"""
@@ -54,11 +58,16 @@ class SocketClient:
                     echo_buffer = ack_message.encode()
                     self._client.send(echo_buffer)
 
-                    print(f"{self.client_name}: recived message from server")
+                    if(self.logger):
+                        print(f"{self.client_name}: recived message from server")
+
+                    self.on_message_recived(message_text)
 
             elif(response.find("<|ACK|>") > -1):
                 if(response == "<|M|><|ACK|>"):
-                    print(f"{self.client_name}: Message delivered")
+                    if(self.logger):
+                        print(f"{self.client_name}: Message delivered")
+                    self.on_message_delivered()
 
                 elif(response == "<|DR|><|ACK|>"):
                     try:
@@ -71,6 +80,7 @@ class SocketClient:
                         self._client.close()
                         self.is_connected = False
                         print(f"{self.client_name}: Disconnected")
+                        self.on_disconnected
                     return
 
     def connect(self):
@@ -86,7 +96,8 @@ class SocketClient:
         except:
             print(f"{self.client_name}: Connection error: The destination computer rejected the connection request. Make sure that the server is running and available for connection")
             return 
-        print(f"{self.client_name}: Waiting for server responce")
+        if(self.logger):
+            print(f"{self.client_name}: Waiting for server responce")
 
         message = f"{self.client_name}<|CR|><|EOM|>"
         message_bytes = message.encode()
@@ -113,6 +124,8 @@ class SocketClient:
         if(self._message_reciver == None):
             self._message_reciver = threading.Thread(target=self._listen_to_message_async)
             self._message_reciver.start()
+
+        self.on_connected()
 
     def send_message(self, message: str):
         """Sends message to server"""
@@ -146,4 +159,15 @@ class SocketClient:
             self.is_connected = False
             return
 
-        
+    def on_message_recived(self, text: str):
+        """Called when recived message from server"""
+
+    def on_message_delivered(self):
+        """Called when message delivered to server"""
+
+    def on_connected(self):
+        """Called when client connected to server"""
+    
+    def on_disconnected(self):
+        """Called when client disconnected to server"""
+
