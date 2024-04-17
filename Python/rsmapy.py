@@ -21,6 +21,8 @@ class RSMA:
     def execute(command: str):
         if(RSMA.is_connected):
             RSMA.client.send_message("<|CMD|>" + command)
+        else:
+            print("Error. Not connected to server")
 
     def load_scene(scene_name: str):
         RSMA.execute(f"scene_load {scene_name}")

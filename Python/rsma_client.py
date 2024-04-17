@@ -4,6 +4,8 @@ class RSMAClient(SocketClient):
 
     controllers: list = []
 
+    gpios: list = []
+
     def on_message_recived(self, text: str):
         """Called when recived message from server"""
         if(text.find("<|Position|>") > -1):
@@ -14,6 +16,17 @@ class RSMAClient(SocketClient):
                 RSMAClient.controllers.append(splited)
             else:
                 RSMAClient.controllers[int(splited[0])] = splited.copy()
+        elif(text.find("<|GPIO|>") > -1):
+            text = text.replace("<|GPIO|>", "")
+            text = text.replace(",", ".")
+            splited = text.split("<|s|>")
+            if(len(RSMAClient.gpios) == int(splited[0])):
+                RSMAClient.gpios.append(splited)
+            else:
+                RSMAClient.gpios[int(splited[0])] = splited.copy()
+        else:
+            print(text)
+
 
 
             
