@@ -45,14 +45,20 @@ class RSMA:
     def add_drone(x, y, z):
         RSMA.execute(f"drone {x} {y} {z}")
 
-    def set_drone_acceleration(id, x, y, z, yaw):
-        RSMA.execute(f"drone_move {id} {x} {y} {z} {yaw}")
+    def set_drone_acceleration(id, x, y, z):
+        RSMA.execute(f"drone_acceleration {id} {x} {y} {z}")
 
     def set_drone_camera(id, x, y, z, smooth):
         RSMA.execute(f"drone_camera {id} {x} {y} {z} {smooth}")
 
     def set_drone_control(id, mode):
         RSMA.execute(f"drone_manual_control {id} {mode}")
+
+    def drone_move(id, x, y, z, kp, ki, kd):
+        RSMA.execute(f"drone_move {id} {x} {y} {z} {kp} {ki} {kd}")
+
+    def drone_switch_camera(id):
+        RSMA.execute(f"drone_switch_camera {id}")
 
     def writer_start(id):
         RSMA.execute(f"writer_start {id}")
