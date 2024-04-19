@@ -14,6 +14,10 @@ def main():
     RSMA.message("Hello RSMA!")
     time.sleep(0.1)
 
+    #executing command
+    RSMA.execute("marker Blue 0 0 0")
+    time.sleep(0.01)
+
     #sending command to RSMA
     RSMA.load_scene("Agrobot")
     time.sleep(0.1)
