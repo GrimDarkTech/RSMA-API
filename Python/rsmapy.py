@@ -69,6 +69,12 @@ class RSMA:
     def controller_position(id):
         RSMA.execute(f"controller_position {id}")
 
+    def trails_start(id):
+        RSMA.execute(f"trails_start {id}")
+    
+    def trails_stop(id):
+        RSMA.execute(f"trails_stop {id}")
+
     def message(text: str):
         if(RSMA.is_connected):
             RSMA.client.send_message(text)

@@ -8,8 +8,8 @@ class RSMAClient(SocketClient):
 
     def on_message_recived(self, text: str):
         """Called when recived message from server"""
-        if(text.find("<|Position|>") > -1):
-            text = text.replace("<|Position|>", "")
+        if(text.find("<|Transform|>") > -1):
+            text = text.replace("<|Transform|>", "")
             text = text.replace(",", ".")
             splited = text.split("<|s|>")
             if(len(RSMAClient.controllers) == int(splited[0])):
