@@ -71,10 +71,10 @@ class SocketClient:
 
                 elif(response == "<|DR|><|ACK|>"):
                     try:
-                        self._message_reciver.cancel()
-                        self._client.shutdown(2)
-                    except:
-                        print("Error")
+                        self._message_reciver.join()
+                        self._client.close()
+                    except Exception as e:
+                        print(e)
                         return
                     finally:
                         self._client.close()
@@ -89,7 +89,7 @@ class SocketClient:
             print(f"{self.client_name}: Сlient is already connected to server")
             return
         
-        self._client = socket.socket()
+        self._client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
             self._client.connect((self.server_IP, self.server_port))
@@ -120,20 +120,22 @@ class SocketClient:
         if(response == "<|CR|><|ACK|>"):
             print(f"{self.client_name}: successfully connect to server.")
             self.is_connected = True
+        else:
+            self._client.close
 
         if(self._message_reciver == None):
-            self._message_reciver = threading.Thread(target=self._listen_to_message_async)
-            self._message_reciver.start()
+            _message_reciver = threading.Thread(target=self._listen_to_message_async, daemon=True)
+            _message_reciver.start()
 
         self.on_connected()
 
-    def send_message(self, message: str):
+    def send_message(self, message_text: str):
         """Sends message to server"""
         if(not self.is_connected):
             print(f"{self.client_name}: client is NOT connected to server")
             return
         
-        message = f"{self.client_name}<|M|>" + message + "<|EOM|>"
+        message = f"{self.client_name}<|M|>" + message_text + "<|EOM|>"
         message_bytes = message.encode()
 
         try:
