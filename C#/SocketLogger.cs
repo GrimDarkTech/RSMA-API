@@ -4,14 +4,8 @@ using System;
 
 namespace RSMALogger
 {
-    /// <summary>
-    /// Universal class for displaying logs to OS terminal or Unity console
-    /// </summary>
     public class Logger
     {
-        /// <summary>
-        /// Backend used for text logging.
-        /// </summary>
         public static Backends backend;
 
         /// <summary>

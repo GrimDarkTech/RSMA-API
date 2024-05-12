@@ -42,46 +42,45 @@ class SocketClient:
                 print(f"{self.client_name}: Connection error: The destination computer rejected the connection request. Try change client/user name")
                 return
             
-            response = buffer.decode()
+            received_text = buffer.decode()
 
-            if(response.find("<|EOM|>") > -1):
-                response = response.replace("<|EOM|>", "")
+            if(received_text.find("<|EOM|>") > -1 or received_text.find("<|ACK|>") > -1):
+                messages = received_text.split("<|EOM|>")
+                acks = received_text.split("<|ACK|>")
 
-                message_text = ""
-                client_name = ""
-                if(response.find("<|M|>") > -1):
-                    separetedValues = response.split("<|M|>")
-                    client_name = separetedValues[0]
-                    message_text = separetedValues[1]
+                if(len(messages) > 1):
+                    for message in messages:
+                        if(message.find("<|M|>") > -1):
+                            text = message.split("<|M|>")[1]
 
-                    ack_message = "<|M|><|ACK|>"
-                    echo_buffer = ack_message.encode()
-                    self._client.send(echo_buffer)
+                            ack_message = "<|M|><|ACK|>"
+                            echo_buffer = ack_message.encode()
+                            self._client.send(echo_buffer)
 
-                    if(self.logger):
-                        print(f"{self.client_name}: recived message from server")
+                            if(self.logger):
+                                print(f"{self.client_name}: recived message from server")
 
-                    self.on_message_recived(message_text)
+                            self.on_message_recived(text)
 
-            elif(response.find("<|ACK|>") > -1):
-                if(response == "<|M|><|ACK|>"):
-                    if(self.logger):
-                        print(f"{self.client_name}: Message delivered")
-                    self.on_message_delivered()
-
-                elif(response == "<|DR|><|ACK|>"):
-                    try:
-                        self._message_reciver.join()
-                        self._client.close()
-                    except Exception as e:
-                        print(e)
-                        return
-                    finally:
-                        self._client.close()
-                        self.is_connected = False
-                        print(f"{self.client_name}: Disconnected")
-                        self.on_disconnected
-                    return
+                if(len(acks) > 1):
+                    for ack in acks:
+                        if(ack == "<|M|>"):
+                            if(self.logger):
+                                print(f"{self.client_name}: Message delivered")
+                            self.on_message_delivered()
+                        elif(ack == "<|DR|>"):
+                            try:
+                                self._message_reciver.join()
+                                self._client.close()
+                            except Exception as e:
+                                print(e)
+                                return
+                            finally:
+                                self._client.close()
+                                self.is_connected = False
+                                print(f"{self.client_name}: Disconnected")
+                                self.on_disconnected
+                            return
 
     def connect(self):
         """Connects client to server"""
